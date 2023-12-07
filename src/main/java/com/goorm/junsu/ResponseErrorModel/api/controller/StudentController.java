@@ -2,19 +2,24 @@ package com.goorm.junsu.ResponseErrorModel.api.controller;
 
 
 import com.goorm.junsu.ResponseErrorModel.api.domain.Student;
+
+import com.goorm.junsu.ResponseErrorModel.api.dto.request.GradeRequest;
 import com.goorm.junsu.ResponseErrorModel.api.dto.request.StudentRequest;
 import com.goorm.junsu.ResponseErrorModel.api.dto.response.ApiResponse;
 import com.goorm.junsu.ResponseErrorModel.api.dto.response.Metadata;
 import com.goorm.junsu.ResponseErrorModel.api.dto.response.Status;
 import com.goorm.junsu.ResponseErrorModel.api.service.StudentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class StudentController {
 
     private final StudentService studentService;
@@ -30,17 +35,32 @@ public class StudentController {
         this.status = status;
     }
 
-    @PostMapping("/create")
+    @PostMapping( "/create")
     @ResponseBody
     public ApiResponse<Student> createStudent(@RequestBody StudentRequest studentRequest) {
+        log.info(studentRequest.getGrade());
+        log.info(studentRequest.getName());
         Student createdStudent = studentService.create(studentRequest);
         return makeResponse(createdStudent);
     }
 
     @GetMapping("/check")
-    @ResponseBody
     public ApiResponse<Student> searchAllStudent() {
-        List<Student> result = studentService.getAll();
+        try{
+            List<Student> result = studentService.getAll();
+            return makeResponse(result);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            throw new NoSuchElementException(e);
+        }
+
+    }
+
+    @PostMapping("/grade")
+    @ResponseBody
+    public ApiResponse<Student> searchTargetGradeStudent(@RequestBody GradeRequest gradeRequest) {
+        log.info(String.valueOf(gradeRequest.getGrade()));
+        List<Student> result = studentService.getStudentsByGrade(gradeRequest);
         return makeResponse(result);
     }
 
@@ -50,13 +70,12 @@ public class StudentController {
         List<T> results = new ArrayList<>();
         results.add(result);
 
-        status.setCode(200);
-        status.setMessage("OK");
-
-        response.setResults(results);
-
+        status.setCode(201);
+        status.setMessage("Created!");
+        response.setStatus(status);
         metadata.setResultCount(1);
         response.setMetadata(metadata);
+        response.setResults(results);
 
         return response;
     }
@@ -66,12 +85,12 @@ public class StudentController {
 
         status.setCode(200);
         status.setMessage("OK");
-
-        response.setResults(results);
+        response.setStatus(status);
 
         metadata.setResultCount(results.size());
         response.setMetadata(metadata);
 
+        response.setResults(results);
         return response;
     }
 }

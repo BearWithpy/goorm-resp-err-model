@@ -2,6 +2,7 @@ package com.goorm.junsu.ResponseErrorModel.api.service;
 
 
 import com.goorm.junsu.ResponseErrorModel.api.domain.Student;
+import com.goorm.junsu.ResponseErrorModel.api.dto.request.GradeRequest;
 import com.goorm.junsu.ResponseErrorModel.api.dto.request.StudentRequest;
 import com.goorm.junsu.ResponseErrorModel.api.repository.StudentRepository;
 
@@ -132,7 +133,10 @@ class StudentServiceTest {
         studentService.create(studentRequest3);
 
         // when
-        List<Student> result = studentService.getStudentsByGrade(5);
+        GradeRequest gradeRequest = GradeRequest.builder()
+                .grade(5)
+                .build();
+        List<Student> result = studentService.getStudentsByGrade(gradeRequest);
 
         // then
         assertThat(result).hasSize(2);

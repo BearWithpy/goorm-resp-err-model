@@ -1,6 +1,7 @@
 package com.goorm.junsu.ResponseErrorModel.api.service;
 
 import com.goorm.junsu.ResponseErrorModel.api.domain.Student;
+import com.goorm.junsu.ResponseErrorModel.api.dto.request.GradeRequest;
 import com.goorm.junsu.ResponseErrorModel.api.dto.request.StudentRequest;
 import com.goorm.junsu.ResponseErrorModel.api.repository.StudentRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,13 @@ public class StudentService {
         return repository.save(student);
     }
 
-    public List<Student> getStudentsByGrade(int targetGrade) {
-        return repository.findByGrade(targetGrade);
+    public List<Student> getStudentsByGrade(GradeRequest targetGrade) {
+        GradeRequest target = GradeRequest.builder()
+                .grade(targetGrade.getGrade())
+                .build();
+
+        List<Student> byGrade = repository.findByGrade(target.getGrade());
+        log.info("target -> {} Found {} students", targetGrade, byGrade.size());
+        return byGrade;
     }
 }
