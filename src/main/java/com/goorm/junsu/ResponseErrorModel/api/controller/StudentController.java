@@ -106,8 +106,9 @@ public class StudentController {
 
         List<Student> result = studentService.getStudentsByGrade(gradeRequest);
         if (result.isEmpty()) {
+            causeData = Map.of("invalidCommand", "Student Not Found");
             throw new CustomException(ErrorCode.EMPTY_STUDENT.getCode(),
-                    ErrorCode.EMPTY_STUDENT.getErrorMessage());
+                    ErrorCode.EMPTY_STUDENT.getErrorMessage(), causeData);
         }
         return makeResponse(result);
     }
