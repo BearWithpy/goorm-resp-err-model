@@ -8,4 +8,6 @@ import org.springframework.stereotype.Component;
 public class Status {
     private int code;
     private String message;
+
+
 }
