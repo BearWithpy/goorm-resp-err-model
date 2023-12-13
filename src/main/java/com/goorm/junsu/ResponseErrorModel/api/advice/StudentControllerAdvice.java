@@ -33,6 +33,9 @@ public class StudentControllerAdvice {
         if (customException.getData() != null && customException.getData().containsKey("invalidName")) {
             cause.put("invalidName", customException.getData().get("invalidName"));
         }
+        if (customException.getData() != null && customException.getData().containsKey("invalidCommand")) {
+            cause.put("noSuchElement", customException.getData().get("invalidCommand"));
+        }
         Map<String, Map<String, String>> data = new HashMap<>();
         data.put("inputRestriction", cause);
 
